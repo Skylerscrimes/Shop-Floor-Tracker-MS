@@ -11,12 +11,12 @@ WORKDIR /app
 # Step 3: Copy Dependencies File First
 # Copy only the requirements file. This allows Docker to cache the installed
 # dependencies layer unless requirements.txt changes, speeding up builds.
-COPY requirements .
+COPY requirements 
 
 # Step 4: Install Dependencies
 # Upgrade pip and install the packages listed in requirements.txt.
 # --no-cache-dir reduces image size by not storing the pip cache.
-RUN pip install --no-cache-dir --upgrade pip -r requirements.
+RUN pip install --no-cache-dir --upgrade pip -r requirements
 
 # Step 5: Copy Application Code
 # Copy the rest of your application files (app.py, models.py, templates folder,
