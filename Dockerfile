@@ -10,7 +10,7 @@ WORKDIR /app
 
 # Step 3: Copy Dependencies File First
 # Copy only the requirements file. This allows Docker to cache the installed
-# dependencies layer unless requirements.txt changes, speeding up builds.
+# dependencies layer unless requirements changes, speeding up builds.
  
 
 # Step 4: Install Dependencies
