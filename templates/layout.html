@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Shop Floor Dashboard{% endblock %}</title>
+    <!-- Bootstrap CSS from Replit theme -->
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <!-- Custom styles for mustard yellow theme -->
+    <style>
+        :root {
+            --mustard-yellow: #e1ad01;
+            --mustard-yellow-light: #f3c52d;
+            --mustard-yellow-dark: #c49600;
+        }
+
+        .navbar {
+            background-color: var(--mustard-yellow-dark) !important;
+        }
+
+        .navbar-brand, .nav-link {
+            color: white !important;
+        }
+
+        .btn-primary {
+            background-color: var(--mustard-yellow) !important;
+            border-color: var(--mustard-yellow-dark) !important;
+            color: black !important;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--mustard-yellow-light) !important;
+            border-color: var(--mustard-yellow) !important;
+        }
+
+        .btn-success {
+            background-color: var(--mustard-yellow) !important;
+            border-color: var(--mustard-yellow-dark) !important;
+            color: black !important;
+        }
+
+        .btn-success:hover {
+            background-color: var(--mustard-yellow-light) !important;
+            border-color: var(--mustard-yellow) !important;
+        }
+
+        .card-header {
+            background-color: var(--mustard-yellow) !important;
+            color: black !important;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background-color: var(--mustard-yellow-light);
+            color: black;
+        }
+
+        /* Common Mobile Styles */
+        @media (max-width: 767px) {
+            /* Larger touch targets for buttons */
+            .btn {
+                padding: 0.5rem 1rem;
+                font-size: 1rem;
+                min-height: 44px; /* Minimum Apple recommended touch target size */
+            }
+
+            /* Mobile-friendly navbar */
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+
+            /* Add 'active' effect for touch feedback */
+            .btn.active, .nav-link.active {
+                opacity: 0.8;
+                transform: scale(0.98);
+            }
+
+            /* Improved form inputs on mobile */
+            .form-control, .form-select {
+                height: 44px;
+                font-size: 16px; /* Prevents iOS zoom on focus */
+            }
+
+            /* Card adjustments for mobile */
+            .card {
+                margin-bottom: 1rem;
+            }
+
+            /* Make modals more mobile-friendly */
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+
+            /* Floating action button base styles */
+            .mobile-fab {
+                position: fixed;
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                text-align: center;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+                z-index: 1000;
+            }
+
+            /* Add pulse animation for important floating buttons */
+            .mobile-fab.pulse {
+                animation: pulse 2s infinite;
+            }
+
+            @keyframes pulse {
+                0% {
+                    box-shadow: 0 0 0 0 rgba(225, 173, 1, 0.7);
+                }
+                70% {
+                    box-shadow: 0 0 0 10px rgba(225, 173, 1, 0);
+                }
+                100% {
+                    box-shadow: 0 0 0 0 rgba(225, 173, 1, 0);
+                }
+            }
+        }
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg mb-4">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    <img src="" id="company-logo" alt="Company Logo" style="height: 40px; max-width: 200px; display: none; margin-right: 10px;">
+                    <i class="fas fa-industry" id="default-icon"></i> Shop Floor Dashboard
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin"><i class="fas fa-cog"></i> Admin</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="rolesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-users"></i> Role Views
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="rolesDropdown">
+                                <li><h6 class="dropdown-header">Department Views</h6></li>
+                                <li><a class="dropdown-item" href="/dept-admin/"><i class="fas fa-hammer"></i> Carpentry</a></li>
+                                <li><a class="dropdown-item" href="/mep-admin"><i class="fas fa-wrench"></i> MEP</a></li>
+                                <li><a class="dropdown-item" href="/surface-finish-admin"><i class="fas fa-paint-roller"></i> Surface & Finish</a></li>
+                                <li><a class="dropdown-item" href="/utility-admin"><i class="fas fa-tools"></i> Utility</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><h6 class="dropdown-header">Management Views</h6></li>
+                                <li><a class="dropdown-item" href="/prod-manager/"><i class="fas fa-user-tie"></i> Production Manager View</a></li>
+                                <li><a class="dropdown-item" href="/qc-officer/"><i class="fas fa-clipboard-check"></i> QC Officer View</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/display"><i class="fas fa-tv"></i> Display</a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/policies">Company Policies</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Load company logo -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/api/logo')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.logoPath) {
+                        const logoElement = document.getElementById('company-logo');
+                        logoElement.src = data.logoPath;
+                        logoElement.style.display = 'inline-block';
+                        document.getElementById('default-icon').style.display = 'none';
+                    }
+                })
+                .catch(error => console.error('Error loading logo:', error));
+        });
+    </script>
+
+    {% block scripts %}{% endblock %}
+    <div class="dark-mode-toggle">
+        <!-- Dark mode toggle element will go here -->
+    </div>
+</body>
+</html>

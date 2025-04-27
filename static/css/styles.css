@@ -1,0 +1,275 @@
+/* Global styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    touch-action: manipulation; /* Prevents double-tap zoom on touch devices */
+}
+
+/* Mustard seed yellow color variables */
+:root {
+    --mustard-yellow: #e1ad01;
+    --mustard-yellow-light: #f3c52d;
+    --mustard-yellow-dark: #c49600;
+    --touch-target-size: 44px; /* Minimum touch target size for accessibility */
+}
+
+/* Admin page specific styles */
+#configForm label {
+    font-weight: 500;
+}
+
+#saveButton {
+    font-size: 1.2rem;
+    padding: 12px;
+    min-height: var(--touch-target-size);
+}
+
+/* Increase touch target size for buttons on mobile */
+.btn {
+    min-height: 38px; /* Default button height for better touch targets */
+}
+
+/* Display page specific styles */
+.display-container {
+    min-height: 100vh;
+}
+
+/* Touch-friendly form controls */
+.form-control, .form-select {
+    height: calc(var(--touch-target-size) + 2px);
+    font-size: 16px; /* Prevents iOS zoom on input focus */
+}
+
+/* Larger checkboxes for touch interfaces */
+.form-check-input {
+    width: 24px;
+    height: 24px;
+    margin-top: 0.15em;
+}
+
+/* More space for touch targets in lists */
+.list-group-item {
+    padding: 12px 15px;
+}
+
+/* Responsive tables for mobile */
+@media (max-width: 767px) {
+    .table-responsive-sm {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Stackable cards on mobile */
+    .card-deck {
+        display: block;
+    }
+
+    .card-deck .card {
+        margin-bottom: 15px;
+    }
+}
+
+
+/* Quick navigation menu */
+.quick-nav {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1000;
+    background: rgba(0,0,0,0.8);
+    padding: 10px;
+    border-radius: 10px;
+    display: none;
+}
+
+.quick-nav.show {
+    display: block;
+}
+
+.quick-nav-item {
+    display: block;
+    color: white;
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.quick-nav-item:hover {
+    background: var(--mustard-yellow);
+    color: black;
+}
+
+/* Search bar */
+.search-container {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    background: #1a1a1a;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--mustard-yellow);
+    background: #2a2a2a;
+    color: white;
+}
+
+/* Progress indicators */
+.progress-pill {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    background: var(--mustard-yellow);
+    color: black;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 767px) {
+    /* Improved mobile navigation */
+    .container {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .accordion-button {
+        padding: 0.75rem;
+        min-height: var(--touch-target-size);
+    }
+
+    .form-label {
+        margin-bottom: 0.25rem;
+    }
+
+    .mb-3 {
+        margin-bottom: 0.75rem !important;
+    }
+
+    /* Larger touch targets for buttons */
+    .btn {
+        padding: 0.5rem 1rem;
+    }
+
+    /* Floating action button style for main actions */
+    .mobile-fab {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    /* Sticky headers for mobile */
+    .sticky-top-mobile {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    /* Full-width buttons on mobile */
+    .btn-mobile-full {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+
+    /* Touch-friendly checkboxes */
+    .stage-checkbox {
+        transform: scale(1.3);
+        margin-right: 8px;
+    }
+}
+
+@media (min-width: 992px) {
+    /* Large screens - better for TV displays */
+    .display-container h1 {
+        font-size: 3rem;
+    }
+
+    .card-header h3 {
+        font-size: 2rem;
+    }
+
+    .card-body h5 {
+        font-size: 1.4rem;
+    }
+
+    .display-container .card {
+        border-width: 3px;
+    }
+}
+
+/* Status display styles */
+.empty-status {
+    opacity: 0.5;
+    font-style: italic;
+}
+
+/* Animation for auto-refresh indicator */
+@keyframes spin {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
+}
+
+.auto-refresh-active .fa-sync-alt {
+    animation: spin 2s linear infinite;
+}
+
+/* Swipe indicator for mobile */
+.swipe-indicator {
+    display: none;
+    text-align: center;
+    padding: 10px;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 767px) {
+    .swipe-indicator {
+        display: block;
+    }
+}
+
+/* Active/pressed state for touch */
+.btn:active, .nav-link:active, .accordion-button:active {
+    transform: scale(0.98);
+    transition: transform 0.1s;
+}
+
+/* Improved focus states for accessibility */
+.btn:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.25rem rgba(225, 173, 1, 0.25);
+}
+.loading-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid rgba(255,255,255,.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 0.5rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}

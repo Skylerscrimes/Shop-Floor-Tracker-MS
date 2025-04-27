@@ -1,0 +1,60 @@
+
+{% extends "layout.html" %}
+
+{% block title %}Company Policies - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1><i class="fas fa-book"></i> Company Policies & Guidelines</h1>
+            
+            <!-- Upload Form -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h3 class="mb-0">Upload New Policy Document</h3>
+                </div>
+                <div class="card-body">
+                    <form id="policyUploadForm" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="policyTitle" class="form-label">Document Title</label>
+                            <input type="text" class="form-control" id="policyTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="policyType" class="form-label">Document Type</label>
+                            <select class="form-control" id="policyType" required>
+                                <option value="policy">Policy</option>
+                                <option value="guideline">Guideline</option>
+                                <option value="rule">Rule</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="policyFile" class="form-label">Upload Document</label>
+                            <input type="file" class="form-control" id="policyFile" accept=".pdf,.doc,.docx" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-upload"></i> Upload Document
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Documents List -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Current Documents</h3>
+                </div>
+                <div class="card-body">
+                    <div id="policiesList" class="list-group">
+                        <!-- Documents will be loaded here dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/policies.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,30 @@
+
+{% extends "layout.html" %}
+
+{% block title %}Quality Control Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-4">
+            <div class="card-header bg-danger text-white">
+                <h2><i class="fas fa-clipboard-check"></i> Quality Control Dashboard</h2>
+                <p class="lead mb-0">Department: <span id="deptName" class="badge bg-warning">{{ department }}</span></p>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> View and manage quality control flags across all bays.
+                </div>
+
+                <div id="departmentStages">
+                    <!-- Stages will be loaded here dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/qc_officer.js') }}"></script>
+{% endblock %}

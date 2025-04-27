@@ -1,0 +1,331 @@
+{% extends "layout.html" %}
+
+{% block title %}Display - Shop Floor Dashboard{% endblock %}
+
+{% block head %}
+<style>
+    body {
+        background-color: black;
+        color: white;
+        overflow-x: hidden; /* Allow vertical scrolling on mobile, but prevent horizontal */
+    }
+    .navbar {
+        background-color: var(--mustard-yellow-dark) !important;
+    }
+    .display-container {
+        padding: 20px;
+    }
+    .last-updated {
+        position: fixed;
+        bottom: 10px;
+        right: 20px;
+        font-size: 14px;
+        color: #6c757d;
+        z-index: 100;
+        background-color: rgba(0,0,0,0.7);
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+    .card {
+        border-color: var(--mustard-yellow) !important;
+        border-width: 2px !important;
+        margin-bottom: 20px; /* Add space between cards for mobile */
+    }
+    .card-header {
+        background-color: var(--mustard-yellow) !important;
+        color: black !important;
+    }
+    h5 {
+        color: var(--mustard-yellow);
+    }
+
+    /* QC flag indicator */
+    .qc-flag-indicator {
+        color: #ff4136;
+        margin-left: 10px;
+        animation: pulse 1.5s infinite;
+    }
+
+    /* Sign-off indicators */
+    .lead-signoff {
+        color: #4299e1;
+        margin-left: 5px;
+    }
+
+    .manager-signoff {
+        color: #48bb78;
+        margin-left: 5px;
+    }
+
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+
+    /* Mobile-specific styles */
+    @media (max-width: 767px) {
+        .display-container {
+            padding: 10px;
+        }
+
+        /* Larger text for tiny screens */
+        h5 {
+            font-size: 1.1rem;
+        }
+
+        /* Make progress bars more visible */
+        .progress {
+            height: 28px !important; 
+        }
+
+        /* Last updated indicator moved to bottom center on mobile */
+        .last-updated {
+            left: 50%;
+            right: auto;
+            transform: translateX(-50%);
+            text-align: center;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        /* Make header more compact on mobile */
+        h1.text-center {
+            font-size: 1.8rem;
+        }
+
+        /* Swipe hint for mobile */
+        .swipe-hint {
+            display: block;
+            text-align: center;
+            color: #6c757d;
+            padding: 10px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+    }
+
+    /* Hide swipe hint on desktop */
+    .swipe-hint {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="display-container">
+    <div class="row">
+        <div class="col-12 mb-4">
+            <h1 class="text-center text-white">
+                <img src="" id="display-company-logo" alt="Company Logo" style="height: 40px; max-width: 200px; display: none; vertical-align: middle; margin-right: 15px;">
+                <span id="default-icon-display" style="margin-right: 15px;"><i class="fas fa-industry"></i></span> Shop Floor Status
+                <small class="d-block fs-5 text-muted">
+                    <span id="currentDateTime"></span>
+                </small>
+            </h1>
+            <!-- Mobile swipe hint -->
+            <div class="swipe-hint">
+                <i class="fas fa-hand-point-right me-2"></i>Swipe left/right to view all areas
+            </div>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4" id="dashboardDisplay">
+        <!-- Bay 1 -->
+        <div class="col">
+            <div class="card h-100 bg-dark">
+                <div class="card-header">
+                    <h3 class="mb-0">Bay 1</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h5><i class="fas fa-tag"></i> Name</h5>
+                        <p class="fs-4 text-white" id="displayBay1Name">—</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-barcode"></i> Serial #</h5>
+                        <p class="fs-5 text-white" id="displayBay1Serial">—</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <h5><i class="fas fa-tasks"></i> Next Stage</h5>
+                        <p class="fs-5 text-white">
+                            <a href="/checklist/bay1" class="text-decoration-none" id="displayBay1Stages">—</a>
+                        </p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-users"></i> Next Task</h5>
+                        <p class="fs-5 text-white" id="displayBay1Departments">—</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-calendar-alt"></i> Progress</h5>
+                        <p class="fs-5 text-white" id="displayBay1Week">—</p>
+                        <div class="progress mt-2" style="height: 25px;">
+                            <div id="displayBay1Progress" class="progress-bar bg-warning progress-bar-striped progress-bar-animated" 
+                                role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                        </div>
+                        <p class="text-muted mt-1" id="displayBay1ProgressText">No stages defined</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bay 2 -->
+        <div class="col">
+            <div class="card h-100 bg-dark">
+                <div class="card-header">
+                    <h3 class="mb-0">Bay 2</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h5><i class="fas fa-tag"></i> Name</h5>
+                        <p class="fs-4 text-white" id="displayBay2Name">—</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-barcode"></i> Serial #</h5>
+                        <p class="fs-5 text-white" id="displayBay2Serial">—</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h5><i class="fas fa-tasks"></i> Stages</h5>
+                        <p class="fs-5 text-white" id="displayBay2Stages">—</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-users"></i> Next Task</h5>
+                        <p class="fs-5 text-white" id="displayBay2Departments">—</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-calendar-alt"></i> Progress</h5>
+                        <p class="fs-5 text-white" id="displayBay2Week">—</p>
+                        <div class="progress mt-2" style="height: 25px;">
+                            <div id="displayBay2Progress" class="progress-bar bg-warning progress-bar-striped progress-bar-animated" 
+                                role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                        </div>
+                        <p class="text-muted mt-1" id="displayBay2ProgressText">No stages defined</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bay 3 -->
+        <div class="col">
+            <div class="card h-100 bg-dark">
+                <div class="card-header">
+                    <h3 class="mb-0">Bay 3</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h5><i class="fas fa-tag"></i> Name</h5>
+                        <p class="fs-4 text-white" id="displayBay3Name">—</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-barcode"></i> Serial #</h5>
+                        <p class="fs-5 text-white" id="displayBay3Serial">—</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h5><i class="fas fa-tasks"></i> Stages</h5>
+                        <p class="fs-5 text-white" id="displayBay3Stages">—</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-users"></i> Next Task</h5>
+                        <p class="fs-5 text-white" id="displayBay3Departments">—</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-calendar-alt"></i> Progress</h5>
+                        <p class="fs-5 text-white" id="displayBay3Week">—</p>
+                        <div class="progress mt-2" style="height: 25px;">
+                            <div id="displayBay3Progress" class="progress-bar bg-warning progress-bar-striped progress-bar-animated" 
+                                role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                        </div>
+                        <p class="text-muted mt-1" id="displayBay3ProgressText">No stages defined</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bay 4 -->
+        <div class="col">
+            <div class="card h-100 bg-dark">
+                <div class="card-header">
+                    <h3 class="mb-0">Bay 4</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h5><i class="fas fa-tag"></i> Name</h5>
+                        <p class="fs-4 text-white" id="displayBay4Name">—</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-barcode"></i> Serial #</h5>
+                        <p class="fs-5 text-white" id="displayBay4Serial">—</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h5><i class="fas fa-tasks"></i> Stages</h5>
+                        <p class="fs-5 text-white" id="displayBay4Stages">—</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-users"></i> Next Task</h5>
+                        <p class="fs-5 text-white" id="displayBay4Departments">—</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-calendar-alt"></i> Progress</h5>
+                        <p class="fs-5 text-white" id="displayBay4Week">—</p>
+                        <div class="progress mt-2" style="height: 25px;">
+                            <div id="displayBay4Progress" class="progress-bar bg-warning progress-bar-striped progress-bar-animated" 
+                                role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                        </div>
+                        <p class="text-muted mt-1" id="displayBay4ProgressText">No stages defined</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ramp -->
+        <div class="col">
+            <div class="card h-100 bg-dark">
+                <div class="card-header">
+                    <h3 class="mb-0">Ramp</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h5><i class="fas fa-tag"></i> Name</h5>
+                        <p class="fs-4 text-white" id="displayRampName">—</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-barcode"></i> Serial #</h5>
+                        <p class="fs-5 text-white" id="displayRampSerial">—</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h5><i class="fas fa-tasks"></i> Stages</h5>
+                        <p class="fs-5 text-white" id="displayRampStages">—</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-users"></i> Next Task</h5>
+                        <p class="fs-5 text-white" id="displayRampDepartments">—</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-calendar-alt"></i> Progress</h5>
+                        <p class="fs-5 text-white" id="displayRampWeek">—</p>
+                        <div class="progress mt-2" style="height: 25px;">
+                            <div id="displayRampProgress" class="progress-bar bg-warning progress-bar-striped progress-bar-animated" 
+                                role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                        </div>
+                        <p class="text-muted mt-1" id="displayRampProgressText">No stages defined</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="last-updated text-muted">
+        <i class="fas fa-sync-alt"></i> Last updated: <span id="lastUpdatedTime">—</span>
+        <div>Auto-refreshes every 30 seconds</div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/display.js') }}"></script>
+{% endblock %}

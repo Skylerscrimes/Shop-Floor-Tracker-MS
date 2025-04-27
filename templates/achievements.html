@@ -1,0 +1,408 @@
+{% extends "layout.html" %}
+
+{% block title %}Achievements - {{ area.area_type.capitalize() }}{% endblock %}
+
+{% block head %}
+<style>
+    .achievement-card {
+        border-radius: 10px;
+        margin-bottom: 20px;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .achievement-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+    
+    .achievement-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+    }
+    
+    .achievement-date {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .achievement-card.progress-25 {
+        border-color: #ffc107; /* warning */
+        background-color: rgba(255, 193, 7, 0.1);
+    }
+    
+    .achievement-card.progress-50 {
+        border-color: #17a2b8; /* info */
+        background-color: rgba(23, 162, 184, 0.1);
+    }
+    
+    .achievement-card.progress-75 {
+        border-color: #28a745; /* success */
+        background-color: rgba(40, 167, 69, 0.1);
+    }
+    
+    .achievement-card.progress-100 {
+        border-color: #dc3545; /* danger */
+        background-color: rgba(220, 53, 69, 0.1);
+    }
+    
+    .achievement-card.quality {
+        border-color: #9c27b0; /* purple */
+        background-color: rgba(156, 39, 176, 0.1);
+    }
+    
+    .empty-achievements {
+        text-align: center;
+        padding: 50px 0;
+    }
+    
+    .empty-achievements i {
+        font-size: 4rem;
+        color: #6c757d;
+        margin-bottom: 20px;
+    }
+    
+    .empty-achievements p {
+        font-size: 1.2rem;
+        color: #6c757d;
+    }
+
+    /* Animation for new achievements */
+    @keyframes achievementPulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    .achievement-new {
+        animation: achievementPulse 2s infinite;
+    }
+    
+    /* Badge style */
+    .achievement-badge {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        z-index: 10;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Admin</a></li>
+                    <li class="breadcrumb-item"><a href="/checklist/{{ area.area_type }}">{{ area.area_type.capitalize() }} Checklist</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Achievements</li>
+                </ol>
+            </nav>
+            <h1 class="text-center mb-4">
+                <i class="fas fa-trophy text-warning me-2"></i> Achievements
+                <small class="d-block text-muted">{{ area.name or area.area_type.capitalize() }}</small>
+            </h1>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Stats card -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header bg-secondary">
+                    <h3 class="mb-0">Stats</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h5><i class="fas fa-chart-line"></i> Progress</h5>
+                        <div class="progress mt-2" style="height: 25px;">
+                            <div id="areaProgress" class="progress-bar bg-warning progress-bar-striped" 
+                                role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-tasks"></i> Stages</h5>
+                        <p class="fs-5 text-white" id="stagesStats">0 of 0 Complete</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-award"></i> Achievements</h5>
+                        <p class="fs-5 text-white" id="achievementsCount">0 Earned</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Build Info -->
+            <div class="card bg-dark text-white">
+                <div class="card-header bg-secondary">
+                    <h3 class="mb-0">Build Info</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h5><i class="fas fa-tag"></i> Name</h5>
+                        <p class="fs-5 text-white" id="buildName">{{ area.name or '—' }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-barcode"></i> Serial #</h5>
+                        <p class="fs-5 text-white" id="buildSerial">{{ area.serial or '—' }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5><i class="fas fa-calendar-alt"></i> Status</h5>
+                        <p class="fs-5 text-white" id="buildWeekStatus">{{ area.get_current_week() }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <!-- Achievements section -->
+            <div class="card bg-dark text-white">
+                <div class="card-header bg-secondary d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Earned Achievements</h3>
+                    <button id="refreshAchievements" class="btn btn-sm btn-warning">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="achievementsList" class="row row-cols-1 row-cols-md-2 g-4">
+                        <!-- Achievements will be loaded here -->
+                        <div id="emptyAchievements" class="col-12 empty-achievements">
+                            <i class="fas fa-award"></i>
+                            <p>No achievements earned yet.</p>
+                            <p class="text-muted">Complete build tasks to earn achievements!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Area information
+    const areaType = '{{ area.area_type }}';
+    const areaId = {{ area.id }};
+    
+    // DOM elements
+    const achievementsList = document.getElementById('achievementsList');
+    const emptyAchievements = document.getElementById('emptyAchievements');
+    const areaProgress = document.getElementById('areaProgress');
+    const stagesStats = document.getElementById('stagesStats');
+    const achievementsCount = document.getElementById('achievementsCount');
+    const refreshButton = document.getElementById('refreshAchievements');
+    
+    // Load achievements data
+    function loadAchievements() {
+        fetch(`/api/achievements/${areaType}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    renderAchievements(data.achievements);
+                    // Also load area data to update stats
+                    return fetch(`/api/stages/${areaType}`);
+                } else {
+                    throw new Error(data.message || 'Failed to load achievements');
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    updateStats(data.area, data.stages);
+                }
+            })
+            .catch(error => {
+                console.error('Error loading achievements:', error);
+                showToast('Error loading achievements', 'danger');
+            });
+    }
+    
+    // Render achievements
+    function renderAchievements(achievements) {
+        // Clear previous achievements, but keep the empty message
+        const items = achievementsList.querySelectorAll('.achievement-item');
+        items.forEach(item => item.remove());
+        
+        if (achievements.length === 0) {
+            emptyAchievements.style.display = 'block';
+            return;
+        }
+        
+        // Hide empty message
+        emptyAchievements.style.display = 'none';
+        
+        // Sort achievements by date (newest first)
+        achievements.sort((a, b) => {
+            return new Date(b.achievement_date) - new Date(a.achievement_date);
+        });
+        
+        // Create achievement cards
+        achievements.forEach(achievement => {
+            const achievementCard = createAchievementCard(achievement);
+            achievementsList.appendChild(achievementCard);
+        });
+        
+        // Update achievements count
+        achievementsCount.textContent = `${achievements.length} Earned`;
+    }
+    
+    // Create achievement card
+    function createAchievementCard(achievement) {
+        const col = document.createElement('div');
+        col.className = 'col achievement-item';
+        
+        // Determine card style class based on milestone type
+        let cardClass = 'achievement-card bg-dark';
+        if (achievement.milestone_type.includes('progress')) {
+            const percentage = achievement.milestone_type.split('-')[1];
+            cardClass += ` progress-${percentage}`;
+        } else if (achievement.milestone_type.includes('quality')) {
+            cardClass += ' quality';
+        }
+        
+        // Format achievement date
+        const achievementDate = new Date(achievement.achievement_date);
+        const dateString = achievementDate.toLocaleDateString() + ' at ' + 
+            achievementDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        // Check if achievement is new (less than 24 hours old)
+        const isNew = (new Date() - achievementDate) < (24 * 60 * 60 * 1000);
+        if (isNew) {
+            cardClass += ' achievement-new';
+        }
+        
+        // Badge color
+        const badgeColor = achievement.badge_color || 'warning';
+        
+        col.innerHTML = `
+            <div class="${cardClass} position-relative">
+                ${isNew ? `<div class="achievement-badge bg-danger">
+                    <i class="fas fa-exclamation"></i>
+                </div>` : ''}
+                <div class="card-body text-center">
+                    <div class="achievement-icon text-${badgeColor}">
+                        <i class="fas fa-${achievement.badge_icon || 'trophy'}"></i>
+                    </div>
+                    <h4 class="card-title">${achievement.title}</h4>
+                    <p class="card-text">${achievement.description}</p>
+                    <div class="achievement-date mt-3">
+                        <i class="far fa-calendar-alt me-1"></i> ${dateString}
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        return col;
+    }
+    
+    // Update stats from area and stages data
+    function updateStats(area, stages) {
+        // Calculate progress
+        const progress = area.progress || 0;
+        areaProgress.style.width = `${progress}%`;
+        areaProgress.textContent = `${progress}%`;
+        areaProgress.setAttribute('aria-valuenow', progress);
+        
+        // Update progress bar color
+        areaProgress.classList.remove('bg-success', 'bg-warning', 'bg-info', 'bg-secondary');
+        if (progress === 100) {
+            areaProgress.classList.add('bg-success');
+        } else if (progress >= 50) {
+            areaProgress.classList.add('bg-warning');
+        } else if (progress > 0) {
+            areaProgress.classList.add('bg-info');
+        } else {
+            areaProgress.classList.add('bg-secondary');
+        }
+        
+        // Update stages stats
+        const totalStages = stages ? stages.length : 0;
+        const completedStages = stages ? stages.filter(s => s.is_completed).length : 0;
+        stagesStats.textContent = `${completedStages} of ${totalStages} Complete`;
+    }
+    
+    // Show a toast notification
+    function showToast(message, type = 'info') {
+        // Create container if it doesn't exist
+        let toastContainer = document.querySelector('.toast-container');
+        
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+            document.body.appendChild(toastContainer);
+        }
+        
+        // Create a unique ID for this toast
+        const toastId = 'toast-' + Date.now();
+        
+        // Create toast HTML
+        const toastHtml = `
+            <div id="${toastId}" class="toast align-items-center text-white bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        `;
+        
+        // Add toast to container
+        toastContainer.innerHTML += toastHtml;
+        
+        // Initialize the toast
+        const toastElement = document.getElementById(toastId);
+        const toast = new bootstrap.Toast(toastElement, {
+            animation: true,
+            autohide: true,
+            delay: 3000
+        });
+        
+        // Show the toast
+        toast.show();
+        
+        // Remove toast from DOM after it's hidden
+        toastElement.addEventListener('hidden.bs.toast', function () {
+            toastElement.remove();
+        });
+    }
+    
+    // Add event listener for refresh button
+    refreshButton.addEventListener('click', function() {
+        this.disabled = true;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+        
+        loadAchievements();
+        
+        // Re-enable button after a delay
+        setTimeout(() => {
+            this.disabled = false;
+            this.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
+        }, 1000);
+    });
+    
+    // Initial load
+    loadAchievements();
+});
+</script>
+{% endblock %}

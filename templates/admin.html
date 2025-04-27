@@ -1,0 +1,467 @@
+{% extends "layout.html" %}
+
+{% block title %}Admin - Shop Floor Dashboard{% endblock %}
+
+{% block content %}
+{% if show_login %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 col-lg-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Admin Login</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    {% if error %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                    {% endif %}
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-4">
+{% endif %}
+            <div class="card-header bg-primary text-white">
+                <h2 class="d-none d-md-block"><i class="fas fa-cog"></i> Dashboard Configuration</h2>
+                <h3 class="d-md-none mb-0"><i class="fas fa-cog"></i> Configuration</h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Edit the information for each bay and ramp below. Click Save to update the display dashboard.
+                </div>
+
+                <!-- Swipe hint for mobile users -->
+                <div class="swipe-indicator d-md-none mb-3">
+                    <i class="fas fa-hand-point-right"></i> Swipe left/right to view more content in tables
+                </div>
+
+                <form id="configForm" class="touch-form">
+                    <div class="accordion" id="areasAccordion">
+                        <!-- Bay 1 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="bay1Heading">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#bay1Collapse" aria-expanded="true" aria-controls="bay1Collapse">
+                                    Bay 1
+                                </button>
+                            </h2>
+                            <div id="bay1Collapse" class="accordion-collapse collapse show" aria-labelledby="bay1Heading">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="bay1Name" class="form-label">Name</label>
+                                            <input type="text" class="form-control" id="bay1Name" name="bay1Name">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="bay1Serial" class="form-label">Serial #</label>
+                                            <input type="text" class="form-control" id="bay1Serial" name="bay1Serial">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <label for="bay1Stages" class="form-label">Stages</label>
+                                            <input type="text" class="form-control" id="bay1Stages" name="bay1Stages">
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label for="bay1Departments" class="form-label">Departments</label>
+                                            <input type="text" class="form-control" id="bay1Departments" name="bay1Departments">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="bay1StartDate" class="form-label"><strong>Build Start Date</strong> <small class="text-muted">(used for week tracking)</small></label>
+                                            <input type="date" class="form-control form-control-lg" id="bay1StartDate" name="bay1StartDate">
+                                            <div class="form-text">Set this date to automatically track which week the build is currently in</div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="bay1EndDate" class="form-label">End Date <small class="text-muted">(optional)</small></label>
+                                            <input type="date" class="form-control" id="bay1EndDate" name="bay1EndDate">
+                                            <div class="form-text">When past this date, build will show as "Completed"</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bay 2 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="bay2Heading">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bay2Collapse" aria-expanded="false" aria-controls="bay2Collapse">
+                                    Bay 2
+                                </button>
+                            </h2>
+                            <div id="bay2Collapse" class="accordion-collapse collapse" aria-labelledby="bay2Heading">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="bay2Name" class="form-label">Name</label>
+                                            <input type="text" class="form-control" id="bay2Name" name="bay2Name">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="bay2Serial" class="form-label">Serial #</label>
+                                            <input type="text" class="form-control" id="bay2Serial" name="bay2Serial">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <label for="bay2Stages" class="form-label">Stages</label>
+                                            <input type="text" class="form-control" id="bay2Stages" name="bay2Stages">
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label for="bay2Departments" class="form-label">Departments</label>
+                                            <input type="text" class="form-control" id="bay2Departments" name="bay2Departments">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="bay2StartDate" class="form-label"><strong>Build Start Date</strong> <small class="text-muted">(used for week tracking)</small></label>
+                                            <input type="date" class="form-control form-control-lg" id="bay2StartDate" name="bay2StartDate">
+                                            <div class="form-text">Set this date to automatically track which week the build is currently in</div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="bay2EndDate" class="form-label">End Date <small class="text-muted">(optional)</small></label>
+                                            <input type="date" class="form-control" id="bay2EndDate" name="bay2EndDate">
+                                            <div class="form-text">When past this date, build will show as "Completed"</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bay 3 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="bay3Heading">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bay3Collapse" aria-expanded="false" aria-controls="bay3Collapse">
+                                    Bay 3
+                                </button>
+                            </h2>
+                            <div id="bay3Collapse" class="accordion-collapse collapse" aria-labelledby="bay3Heading">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="bay3Name" class="form-label">Name</label>
+                                            <input type="text" class="form-control" id="bay3Name" name="bay3Name">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="bay3Serial" class="form-label">Serial #</label>
+                                            <input type="text" class="form-control" id="bay3Serial" name="bay3Serial">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <label for="bay3Stages" class="form-label">Stages</label>
+                                            <input type="text" class="form-control" id="bay3Stages" name="bay3Stages">
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label for="bay3Departments" class="form-label">Departments</label>
+                                            <input type="text" class="form-control" id="bay3Departments" name="bay3Departments">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="bay3StartDate" class="form-label"><strong>Build Start Date</strong> <small class="text-muted">(used for week tracking)</small></label>
+                                            <input type="date" class="form-control form-control-lg" id="bay3StartDate" name="bay3StartDate">
+                                            <div class="form-text">Set this date to automatically track which week the build is currently in</div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="bay3EndDate" class="form-label">End Date <small class="text-muted">(optional)</small></label>
+                                            <input type="date" class="form-control" id="bay3EndDate" name="bay3EndDate">
+                                            <div class="form-text">When past this date, build will show as "Completed"</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bay 4 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="bay4Heading">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bay4Collapse" aria-expanded="false" aria-controls="bay4Collapse">
+                                    Bay 4
+                                </button>
+                            </h2>
+                            <div id="bay4Collapse" class="accordion-collapse collapse" aria-labelledby="bay4Heading">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="bay4Name" class="form-label">Name</label>
+                                            <input type="text" class="form-control" id="bay4Name" name="bay4Name">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="bay4Serial" class="form-label">Serial #</label>
+                                            <input type="text" class="form-control" id="bay4Serial" name="bay4Serial">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <label for="bay4Stages" class="form-label">Stages</label>
+                                            <input type="text" class="form-control" id="bay4Stages" name="bay4Stages">
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label for="bay4Departments" class="form-label">Departments</label>
+                                            <input type="text" class="form-control" id="bay4Departments" name="bay4Departments">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="bay4StartDate" class="form-label"><strong>Build Start Date</strong> <small class="text-muted">(used for week tracking)</small></label>
+                                            <input type="date" class="form-control form-control-lg" id="bay4StartDate" name="bay4StartDate">
+                                            <div class="form-text">Set this date to automatically track which week the build is currently in</div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="bay4EndDate" class="form-label">End Date <small class="text-muted">(optional)</small></label>
+                                            <input type="date" class="form-control" id="bay4EndDate" name="bay4EndDate">
+                                            <div class="form-text">When past this date, build will show as "Completed"</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ramp -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="rampHeading">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#rampCollapse" aria-expanded="false" aria-controls="rampCollapse">
+                                    Ramp
+                                </button>
+                            </h2>
+                            <div id="rampCollapse" class="accordion-collapse collapse" aria-labelledby="rampHeading">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="rampName" class="form-label">Name</label>
+                                            <input type="text" class="form-control" id="rampName" name="rampName">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="rampSerial" class="form-label">Serial #</label>
+                                            <input type="text" class="form-control" id="rampSerial" name="rampSerial">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <label for="rampStages" class="form-label">Stages</label>
+                                            <input type="text" class="form-control" id="rampStages" name="rampStages">
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label for="rampDepartments" class="form-label">Departments</label>
+                                            <input type="text" class="form-control" id="rampDepartments" name="rampDepartments">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="rampStartDate" class="form-label"><strong>Build Start Date</strong> <small class="text-muted">(used for week tracking)</small></label>
+                                            <input type="date" class="form-control form-control-lg" id="rampStartDate" name="rampStartDate">
+                                            <div class="form-text">Set this date to automatically track which week the build is currently in</div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="rampEndDate" class="form-label">End Date <small class="text-muted">(optional)</small></label>
+                                            <input type="date" class="form-control" id="rampEndDate" name="rampEndDate">
+                                            <div class="form-text">When past this date, build will show as "Completed"</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Desktop save button -->
+                    <div class="d-none d-md-block mt-4">
+                        <button type="submit" class="btn btn-success btn-lg px-5" id="saveButton">
+                            <i class="fas fa-save"></i> Save Configuration
+                        </button>
+                    </div>
+
+                    <!-- Mobile save button - fixed at bottom -->
+                    <div class="d-md-none mt-4">
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg" id="saveButtonMobile" style="min-height: 56px;">
+                                <i class="fas fa-save"></i> Save Configuration
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Policy Documents Upload Section -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h4><i class="fas fa-file-upload"></i> Company Policies & Documents</h4>
+                    </div>
+                    <div class="card-body">
+                        <form id="policyUploadForm" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="policyTitle" class="form-label">Document Title</label>
+                                <input type="text" class="form-control" id="policyTitle" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="policyType" class="form-label">Document Type</label>
+                                <select class="form-control" id="policyType" required>
+                                    <option value="policy">Policy</option>
+                                    <option value="guideline">Guideline</option>
+                                    <option value="rule">Rule</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="policyFile" class="form-label">Upload Document</label>
+                                <input type="file" class="form-control" id="policyFile" accept=".pdf,.doc,.docx" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-upload"></i> Upload Document
+                            </button>
+                        </form>
+
+                        <hr>
+
+                        <div id="policiesList" class="list-group mt-4">
+                            <!-- Documents will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logo Upload Section -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h4 class="d-none d-md-block"><i class="fas fa-image"></i> Company Logo</h4>
+                        <h5 class="mb-0 d-md-none"><i class="fas fa-image"></i> Company Logo</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 col-sm-12 mb-3">
+                                <div id="current-logo-container">
+                                    <h5>Current Logo:</h5>
+                                    <div class="p-3 border rounded bg-dark text-center">
+                                        <img id="current-logo-preview" src="" alt="No logo uploaded" style="max-width: 100%; max-height: 100px; display: none;">
+                                        <p id="no-logo-message" class="text-muted">No logo uploaded</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <form id="logoUploadForm" enctype="multipart/form-data">
+                                    <div class="mb-3">
+                                        <label for="logoFile" class="form-label">Upload New Logo</label>
+                                        <div class="input-group mb-2">
+                                            <input class="form-control" type="file" id="logoFile" name="logo" accept="image/png, image/jpeg, image/gif, image/svg+xml">
+                                        </div>
+                                        <div class="form-text">Supported formats: PNG, JPG, GIF, SVG (max 16MB)</div>
+                                    </div>
+                                    <!-- Desktop upload button -->
+                                    <button type="submit" class="btn btn-primary d-none d-md-inline-block" id="uploadLogoButton">
+                                        <i class="fas fa-upload"></i> Upload Logo
+                                    </button>
+
+                                    <!-- Mobile upload button - full width -->
+                                    <div class="d-md-none">
+                                        <div class="d-grid">
+                                            <button type="submit" class="btn btn-primary" id="uploadLogoButtonMobile" style="min-height: 44px;">
+                                                <i class="fas fa-upload"></i> Upload Logo
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h4 class="mb-3"><i class="fas fa-clipboard-check"></i> Build Checklists</h4>
+                    <p class="text-muted">Click on an area below to manage its build stages and track completion:</p>
+
+                    <div class="row row-cols-1 row-cols-md-3 g-3 mb-4">
+                        <div class="col">
+                            <a href="/checklist/bay1" class="card h-100 bg-dark text-white text-decoration-none">
+                                <div class="card-body d-flex align-items-center">
+                                    <i class="fas fa-tasks text-warning fa-2x me-3"></i>
+                                    <div>
+                                        <h5 class="card-title mb-0">Bay 1 Checklist</h5>
+                                        <p class="card-text text-muted">Manage stages & progress</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="/checklist/bay2" class="card h-100 bg-dark text-white text-decoration-none">
+                                <div class="card-body d-flex align-items-center">
+                                    <i class="fas fa-tasks text-warning fa-2x me-3"></i>
+                                    <div>
+                                        <h5 class="card-title mb-0">Bay 2 Checklist</h5>
+                                        <p class="card-text text-muted">Manage stages & progress</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="/checklist/bay3" class="card h-100 bg-dark text-white text-decoration-none">
+                                <div class="card-body d-flex align-items-center">
+                                    <i class="fas fa-tasks text-warning fa-2x me-3"></i>
+                                    <div>
+                                        <h5 class="card-title mb-0">Bay 3 Checklist</h5>
+                                        <p class="card-text text-muted">Manage stages & progress</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="/checklist/bay4" class="card h-100 bg-dark text-white text-decoration-none">
+                                <div class="card-body d-flex align-items-center">
+                                    <i class="fas fa-tasks text-warning fa-2x me-3"></i>
+                                    <div>
+                                        <h5 class="card-title mb-0">Bay 4 Checklist</h5>
+                                        <p class="card-text text-muted">Manage stages & progress</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="/checklist/ramp" class="card h-100 bg-dark text-white text-decoration-none">
+                                <div class="card-body d-flex align-items-center">
+                                    <i class="fas fa-tasks text-warning fa-2x me-3"></i>
+                                    <div>
+                                        <h5 class="card-title mb-0">Ramp Checklist</h5>
+                                        <p class="card-text text-muted">Manage stages & progress</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Desktop display button -->
+                    <div class="text-center d-none d-md-block">
+                        <a href="/display" class="btn btn-primary" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Open Display View
+                        </a>
+                    </div>
+
+                    <!-- Mobile display button - full width -->
+                    <div class="d-md-none">
+                        <div class="d-grid">
+                            <a href="/display" class="btn btn-primary py-3" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> Open Display View
+                            </a>
+                        </div>
+                        <!-- Floating action button for quick access to display -->
+                        <a href="/display" class="mobile-fab btn btn-warning" target="_blank" 
+                           style="z-index: 1050; bottom: 30px; right: 30px;">
+                            <i class="fas fa-tv"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% if not show_login %}
+    </div>
+</div>
+    {% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}
