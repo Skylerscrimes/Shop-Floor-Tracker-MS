@@ -16,7 +16,7 @@ COPY requirements .
 # Step 4: Install Dependencies
 # Upgrade pip and install the packages listed in requirements.txt.
 # --no-cache-dir reduces image size by not storing the pip cache.
-RUN pip install --no-cache-dir --upgrade pip -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip -r requirements.
 
 # Step 5: Copy Application Code
 # Copy the rest of your application files (app.py, models.py, templates folder,
