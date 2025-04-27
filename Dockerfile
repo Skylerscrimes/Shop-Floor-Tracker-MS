@@ -14,7 +14,7 @@ WORKDIR /app
  
 
 # Step 4: Install Dependencies
-# Upgrade pip and install the packages listed in requirements.txt.
+# Upgrade pip and install the packages listed in requirements
 # --no-cache-dir reduces image size by not storing the pip cache.
 RUN pip install --no-cache-dir --upgrade pip -r requirements
 
