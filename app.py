@@ -25,8 +25,7 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
     "pool_pre_ping": True,
 }
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = os.environ.get("DATABASE_URL")
 # Initialize database
 db.init_app(app)
 
